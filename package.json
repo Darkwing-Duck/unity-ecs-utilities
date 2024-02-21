@@ -5,17 +5,11 @@
   "description": "Utility classes and files that simplifies working with Unity.Entities",
   "unity": "2021.1",
   "dependencies": {
-    "com.unity.entities": "1.0.16",
-    "com.[company-name].other-package": "2.0.0"
- },
- "keywords": [
-    "keyword1",
-    "keyword2",
-    "keyword3"
-  ],
+    "com.unity.entities": "1.0.16"
+  },
   "author": {
-    "name": "Unity",
-    "email": "unity@example.com",
+    "name": "Serhii Smirnov",
+    "email": "d.duck.dev@gmail.com",
     "url": "https://www.unity3d.com"
   }
 }
