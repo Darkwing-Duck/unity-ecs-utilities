@@ -230,7 +230,7 @@ namespace Nakuru.Unity.Ecs.Utilities
 			var allSystems = DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Default).ToList();
 			allSystems.RemoveAll(t => _excludedSystemTypes.Contains(t));
 			allSystems.RemoveAll(t => !_namespaceFilters.Contains(t.Namespace));
-			allSystems.RemoveAll(t => !_excludingNameFilters.Contains(t.Name));
+			allSystems.RemoveAll(t => _excludingNameFilters.Contains(t.Name));
 			
 			DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(World, allSystems);
 			
