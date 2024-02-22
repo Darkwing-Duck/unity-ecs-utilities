@@ -29,12 +29,16 @@ namespace Nakuru.Unity.Ecs.Utilities
 		private readonly List<Type> _simulationPhaseSystemTypes;
 		
 		private readonly HashSet<string> _namespaceFilters;
-		private readonly HashSet<Type> _excludedSystems;
+		
+		private readonly HashSet<string> _excludingNameFilters;
+		private readonly HashSet<Type> _excludedSystemTypes;
 
 		private WorldBuilder(string name, WorldFlags flags, bool isDefault)
 		{
 			_namespaceFilters = new HashSet<string>();
-			_excludedSystems = new HashSet<Type>();
+			
+			_excludingNameFilters = new HashSet<string>();
+			_excludedSystemTypes = new HashSet<Type>();
 			
 			_initializePhaseSystemTypes = new List<Type>();
 			_simulationPhaseSystemTypes = new List<Type>();
@@ -122,13 +126,23 @@ namespace Nakuru.Unity.Ecs.Utilities
 		/// Adds all systems from the namespace <c>Unity.Scenes</c>
 		/// </summary>
 		public WorldBuilder WithUnityScenesSystems() => WithNamespaceFilter(UnityNamespace.Scenes);
+		
+		/// <summary>
+		/// Adds excluding name filter.
+		/// All the systems falling under the filter will be excluded from the world.
+		/// </summary>
+		public WorldBuilder WithExcludingNameFilter(string value)
+		{
+			_excludingNameFilters.Add(value);
+			return this;
+		}
 
 		/// <summary>
 		/// Excludes the specified system from being added to the world
 		/// </summary>
 		public WorldBuilder WithExcludingSystem<TSystem>()
 		{
-			_excludedSystems.Add(typeof(TSystem));
+			_excludedSystemTypes.Add(typeof(TSystem));
 			return this;
 		}
 		
@@ -137,7 +151,7 @@ namespace Nakuru.Unity.Ecs.Utilities
 		/// </summary>
 		public WorldBuilder WithExcludingSystems(IEnumerable<Type> systems)
 		{
-			_excludedSystems.UnionWith(systems);
+			_excludedSystemTypes.UnionWith(systems);
 			return this;
 		}
 		
@@ -214,8 +228,9 @@ namespace Nakuru.Unity.Ecs.Utilities
 		public World Build(bool appendToPlayerLoop = false)
 		{
 			var allSystems = DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Default).ToList();
-			allSystems.RemoveAll(t => _excludedSystems.Contains(t));
+			allSystems.RemoveAll(t => _excludedSystemTypes.Contains(t));
 			allSystems.RemoveAll(t => !_namespaceFilters.Contains(t.Namespace));
+			allSystems.RemoveAll(t => !_excludingNameFilters.Contains(t.Name));
 			
 			DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(World, allSystems);
 			
